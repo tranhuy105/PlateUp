@@ -34,6 +34,10 @@ The game’s core functionality revolves around three main interfaces: `Containe
 
 ## Installation
 
+You can try the deployed version of the client. The link is available in this repository. But if you’d rather run it locally on your machine, you can find the setup instructions below!
+
+**⚠️** Please note that since the server is deployed on Render, it may go to sleep after a period of inactivity. If you experience slow loading, please be patient as the instance may need to be wake up.
+
 ### Prerequisites
 
 Ensure you have the following dependencies installed:
