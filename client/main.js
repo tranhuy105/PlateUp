@@ -62,7 +62,9 @@ function loadImage(key) {
 }
 
 function connectWebSocket() {
-  const socket = new WebSocket("ws://localhost:12345");
+  const socket = new WebSocket(
+    import.meta.env.VITE_SOCKET_URL
+  );
 
   socket.onopen = () => {
     console.log("Connected to WebSocket server");
@@ -70,7 +72,7 @@ function connectWebSocket() {
 
   socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    console.log(data);
+    // console.log(data);
 
     switch (data.type) {
       case "INITIAL_STATE":
@@ -276,8 +278,8 @@ function showToast(message) {
 }
 
 function renderGameObject(tile) {
-  thisX = tile.position.x;
-  thisY = tile.position.y;
+  const thisX = tile.position.x;
+  const thisY = tile.position.y;
 
   const img = getTileImage(tile.id);
   if (!tile.isContainer && !tile.isPickupAble) {
@@ -318,7 +320,7 @@ function renderGameObject(tile) {
       tile.type !== "PLATE_SOURCE"
     ) {
       const item = tile.items[0];
-      drawCarriable(item);
+      drawCarriable(item, thisX, thisY);
     } else if (tile.type === "PLATE_SOURCE") {
       if (tile.items.length === 0) {
         drawImage(99, thisX, thisY);
@@ -330,16 +332,16 @@ function renderGameObject(tile) {
 }
 
 function renderPlayer(player) {
-  thisX = player.position.x;
-  thisY = player.position.y;
-  dir = player.facingDirection;
+  const thisX = player.position.x;
+  const thisY = player.position.y;
+  const dir = player.facingDirection;
   switch (dir) {
     case "UP":
     case "DOWN":
     case "LEFT":
     case "RIGHT":
       const busy = player.isBusy ? "_BUSY" : "";
-      console.log("PLAYER_" + dir + busy);
+      // console.log("PLAYER_" + dir + busy);
       drawImage("PLAYER_" + dir + busy, thisX, thisY);
       break;
     default:
@@ -347,7 +349,7 @@ function renderPlayer(player) {
   }
 
   if (player.carrying != null) {
-    drawCarriable(player.carrying);
+    drawCarriable(player.carrying, thisX, thisY);
   }
 }
 
@@ -373,7 +375,7 @@ function drawImage(
   }
 }
 
-function drawCarriable(item) {
+function drawCarriable(item, thisX, thisY) {
   const carriableType = item.carriable;
   switch (carriableType) {
     case "PLATE":
