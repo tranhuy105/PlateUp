@@ -2,39 +2,43 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
-    <title>Plate up</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
-    />
-    <style>
-      body,
-      html {
-        margin: 0;
-        padding: 0;
-        image-rendering: pixelated;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      #gameCanvas {
-        border: 1px solid black;
-      }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plate Up</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <canvas
-      id="gameCanvas"
-      width="1200px"
-      height="624px"
-    ></canvas>
+    <div id="gameContainer">
+      <canvas id="gameCanvas" width="1200" height="624"></canvas>
+    </div>
+    
+    <!-- Popup tutorial -->
+    <div id="tutorialPopup" class="popup">
+      <div class="popup-content">
+        <span class="close-button">×</span>
+        <h2>Game Tutorial</h2>
+        <p>Welcome to Plate Up! Here's a quick guide to get you started:</p>
+        <ul>
+          <li><strong>Movement:</strong> Use the arrow keys to move your character.</li>
+          <li><strong>Pickup:</strong> Press 'P' to pick up items.</li>
+          <li><strong>Drop:</strong> Press 'D' to drop items.</li>
+          <li><strong>Process:</strong> Press 'O' to process items (like cooking).</li>
+          <li><strong>Reset:</strong> Press 'R' to reset the game state in case of something went wrong!.</li>
+        </ul>
+
+        <h3>Recipes</h3>
+        <ul>
+          <li><strong>Raw Pizza:</strong> Processed Tomato + Processed Cheese.</li>
+          <li><strong>Pizza:</strong> Raw Pizza drop into oven.</li>
+          <li><strong>Hotdog:</strong> Bread + Sausage drop at stove.</li>
+        </ul>
+        <p>Happy cooking!</p>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="main.js"></script>
+    <script src="tutorial.js"></script>
+   
   </body>
 </html>

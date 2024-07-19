@@ -66,6 +66,7 @@ public class Ingredient implements Carriable{
                 player.setBusy(false);
                 String message = type.name() + " process completed 💁";
                 GameSocketServer.getInstance().broadcastTimingEvent(message, block);
+                GameSocketServer.getInstance().broadcastPlayerState(player);
                 logger.info(message);
                 shutDownExecutor();
             }, processTime, TimeUnit.MILLISECONDS);

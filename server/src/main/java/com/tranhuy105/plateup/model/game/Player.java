@@ -180,4 +180,10 @@ public class Player {
         return playerState;
     }
 
+    public void resetPosition() {
+        this.x = 2;
+        this.y = 2;
+        this.facingDirection = Direction.DOWN;
+    }
+
 }

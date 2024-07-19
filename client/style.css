@@ -4,9 +4,75 @@ body {
   margin: 0;
   overflow: hidden;
   image-rendering: pixelated;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#gameContainer {
+  flex-grow: 1;
 }
 
 canvas {
   width: 100%;
-  background: blue;
+  background: white;
+}
+
+.popup {
+  display: flex;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  background-color: #fefefe;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 500px;
+  max-height: 80%;
+  overflow-y: auto;
+  text-align: left;
+}
+
+.close-button {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#tutorialPopup h2,
+#tutorialPopup h3 {
+  font-size: 1.5em;
+  margin-top: 0;
+}
+
+#tutorialPopup p {
+  margin: 0.5em 0;
+}
+
+#tutorialPopup ul {
+  list-style: none;
+  padding: 0;
+}
+
+#tutorialPopup ul li {
+  margin: 0.5em 0;
 }
