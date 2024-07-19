@@ -50,8 +50,7 @@ Ensure you have the following dependencies installed:
 Clone the repository to your local machine:
 
     git clone https://github.com/tranhuy105/PlateUp.git
-    cd GameSocketServer
-
+    cd PlateUp/server
 ### Build
 
 Build the project using Maven:
