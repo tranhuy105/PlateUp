@@ -42,9 +42,13 @@ const imageKeys = [
   "RAW_PIZZA",
   "COOKED_PIZZA",
   "PLAYER_UP",
+  "PLAYER_UP_BUSY",
   "PLAYER_DOWN",
   "PLAYER_LEFT",
   "PLAYER_RIGHT",
+  "PLAYER_DOWN_BUSY",
+  "PLAYER_LEFT_BUSY",
+  "PLAYER_RIGHT_BUSY",
   "DISH_WASHER_WATER",
 ];
 
@@ -94,6 +98,11 @@ function connectWebSocket() {
         updateGameObject(data.data);
         renderGame();
         break;
+      case "GAME_RESET":
+        gameState = data;
+        renderGame();
+        showToast("Game has been reset!");
+        break;
       default:
         console.warn("Unknown message type:", data.type);
     }
@@ -132,6 +141,9 @@ function connectWebSocket() {
       case "o":
         sendProcess();
         return;
+      case "r":
+        sendReset();
+        return;
       default:
         return;
     }
@@ -143,6 +155,13 @@ function connectWebSocket() {
       action: "MOVE",
       deltaX: dx,
       deltaY: dy,
+    });
+    socket.send(message);
+  }
+
+  function sendReset() {
+    const message = JSON.stringify({
+      action: "RESET",
     });
     socket.send(message);
   }
@@ -208,6 +227,7 @@ function updatePlayer(playerUpdate) {
     player.position = playerUpdate.position;
     player.carrying = playerUpdate.carrying;
     player.facingDirection = playerUpdate.facingDirection;
+    player.isBusy = playerUpdate.isBusy;
   } else {
     gameState.players.push(playerUpdate);
   }
@@ -318,7 +338,9 @@ function renderPlayer(player) {
     case "DOWN":
     case "LEFT":
     case "RIGHT":
-      drawImage("PLAYER_" + dir, thisX, thisY);
+      const busy = player.isBusy ? "_BUSY" : "";
+      console.log("PLAYER_" + dir + busy);
+      drawImage("PLAYER_" + dir + busy, thisX, thisY);
       break;
     default:
       console.warn("Unknown direction: " + dir);

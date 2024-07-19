@@ -54,6 +54,11 @@ public class CustomerTable extends ContainerObject implements PickUpAble{
             throw new InvalidActionException("You can't serve raw food to your customer ☠️, cook it first!");
         }
 
+        if (items.size() >= maxItem) {
+            logger.info("Max size reached, can not add more item to this "+ containerType);
+            throw new InvalidActionException("Max size reached, can not add more item to this "+ containerType);
+        }
+
         plate.serveDish(this);
         GameSocketServer.getInstance().broadcastTimingEvent("Thank you for your service!", this);
         return true;

@@ -2,8 +2,6 @@ package com.tranhuy105.plateup.network;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.tranhuy105.plateup.exception.InvalidActionException;
-import com.tranhuy105.plateup.model.core.Carriable;
-import com.tranhuy105.plateup.model.core.Plate;
 import com.tranhuy105.plateup.model.game.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.java_websocket.server.WebSocketServer;
@@ -18,6 +16,8 @@ import java.io.IOException;
 import java.util.*;
 
 public class GameSocketServer extends WebSocketServer {
+    private static final long RESET_COOLDOWN_MS = 5 * 60 * 1000;
+    private long lastResetTime = 0;
     private static volatile GameSocketServer instance;
     private static final int PORT = 12345;
     private static final String mapFilePath = "src/main/resources/map.txt";
@@ -122,6 +122,30 @@ public class GameSocketServer extends WebSocketServer {
                     GameObject kitchenBlock = gameMap.getObjectAt(player.getFocusPosition());
                     player.processFoodIngredientOnKitchenBlock(kitchenBlock);
                     broadCastPlayerAction(kitchenBlock, player);
+                    break;
+
+                case "RESET":
+                    long currentTime = System.currentTimeMillis();
+                    long timeSinceLastReset = currentTime - lastResetTime;
+
+                    if (timeSinceLastReset < RESET_COOLDOWN_MS) {
+                        long timeLeft = RESET_COOLDOWN_MS - timeSinceLastReset;
+                        long minutesLeft = timeLeft / (60 * 1000);
+                        long secondsLeft = (timeLeft % (60 * 1000)) / 1000;
+
+                        sendNotification(conn, String.format(
+                                "Game cannot be reset yet. Please wait %d minutes and %d seconds before trying again.",
+                                minutesLeft, secondsLeft
+                        ));
+                        break;
+                    }
+
+                    if (allPlayersNotBusy()) {
+                        resetGame();
+                        lastResetTime = System.currentTimeMillis();
+                    } else {
+                        sendNotification(conn, "Cannot reset game, some players are busy.");
+                    }
                     break;
 
                 default:
@@ -240,6 +264,50 @@ public class GameSocketServer extends WebSocketServer {
             playerStates.add(Player.getPlayerState(player));
         }
         return playerStates;
+    }
+
+    private boolean allPlayersNotBusy() {
+        synchronized (playerMap) {
+            for (Player player : playerMap.values()) {
+                if (player.isBusy()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void resetGame() {
+        try {
+            gameMap = MapLoader.loadMap(mapFilePath);
+        } catch (IOException e) {
+            logger.error("Error reloading map", e);
+            return;
+        }
+
+        synchronized (playerMap) {
+            for (Player player : playerMap.values()) {
+                player.setCarryingItem(null);
+                player.resetPosition();
+            }
+        }
+
+        broadcastNewGameState();
+    }
+
+    private void broadcastNewGameState() {
+        try {
+            Map<String, Object> gameState = getGameState();
+            gameState.put("type", "GAME_RESET");
+            String gameStateJson = objectMapper.writeValueAsString(gameState);
+            synchronized (clients) {
+                for (WebSocket client : clients) {
+                    client.send(gameStateJson);
+                }
+            }
+        } catch (IOException e) {
+            logger.error("Error broadcasting new game state", e);
+        }
     }
 
 
